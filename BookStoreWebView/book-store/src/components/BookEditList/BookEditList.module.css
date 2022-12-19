@@ -1,0 +1,11 @@
+.BookItm {
+    border: 2px solid darkgrey;
+    margin-bottom: 10px;
+    padding: 5px 10px;
+
+    display: grid;
+    grid-template-columns: 2fr repeat(2, 1fr);
+    grid-template-rows: 1fr;
+    grid-column-gap: 5px;
+    text-align: center;
+}
