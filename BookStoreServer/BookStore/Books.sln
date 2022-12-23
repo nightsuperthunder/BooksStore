@@ -2,8 +2,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Books.API", "Books.API\Books.API.csproj", "{CC34DBC0-B0C5-4AC4-A9B6-AB6D110E9290}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Books.BL", "Books.BL\Books.BL.csproj", "{F9043CFD-F679-462C-91C4-6E03BE40EDF0}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -14,9 +12,5 @@ Global
 		{CC34DBC0-B0C5-4AC4-A9B6-AB6D110E9290}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC34DBC0-B0C5-4AC4-A9B6-AB6D110E9290}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CC34DBC0-B0C5-4AC4-A9B6-AB6D110E9290}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F9043CFD-F679-462C-91C4-6E03BE40EDF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F9043CFD-F679-462C-91C4-6E03BE40EDF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F9043CFD-F679-462C-91C4-6E03BE40EDF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F9043CFD-F679-462C-91C4-6E03BE40EDF0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

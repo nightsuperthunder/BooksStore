@@ -1,7 +1,7 @@
-﻿using Books.BL.Entities;
+﻿using Books.API.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Books.BL.Services; 
+namespace Books.API.Services; 
 
 public class UserService : IUserService {
     private readonly BooksContext _context;

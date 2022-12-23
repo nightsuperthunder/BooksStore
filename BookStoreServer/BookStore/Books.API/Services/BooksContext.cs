@@ -1,7 +1,7 @@
-﻿using Books.BL.Entities;
+﻿using Books.API.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Books.BL.Services; 
+namespace Books.API.Services; 
 
 public class BooksContext : DbContext {
     public BooksContext(DbContextOptions<BooksContext> options) : base(options) { }

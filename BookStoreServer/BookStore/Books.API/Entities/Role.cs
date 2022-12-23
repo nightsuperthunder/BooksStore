@@ -1,4 +1,4 @@
-﻿namespace Books.BL.Entities;
+﻿namespace Books.API.Entities;
 
 public class Role : Entity {
     public string Name { get; set; }

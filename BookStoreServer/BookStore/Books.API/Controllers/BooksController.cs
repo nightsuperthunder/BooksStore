@@ -1,14 +1,14 @@
-﻿using Books.BL.Entities;
-using Books.BL.Services;
+﻿using Books.API.Entities;
+using Books.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Books.API.Controllers; 
+
 
 [ApiController]
 [Route("api/books")]
 public class BooksController : ControllerBase {
     private readonly IBookService _bookService;
-
 
     public BooksController(IBookService bookService) {
         _bookService = bookService;

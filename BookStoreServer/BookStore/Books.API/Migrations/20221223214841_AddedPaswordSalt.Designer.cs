@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Books.API.Migrations
 {
     [DbContext(typeof(BooksContext))]
-    [Migration("20221119163912_Init")]
-    partial class Init
+    [Migration("20221223214841_AddedPaswordSalt")]
+    partial class AddedPaswordSalt
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,7 +37,7 @@ namespace Books.API.Migrations
                     b.ToTable("BookUser");
                 });
 
-            modelBuilder.Entity("Books.BL.Entities.Book", b =>
+            modelBuilder.Entity("Books.API.Entities.Book", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -55,11 +55,11 @@ namespace Books.API.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("Path")
+                    b.Property<string>("PreviewImg")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("PreviewImgPath")
-                        .HasColumnType("longtext");
+                    b.Property<float>("Price")
+                        .HasColumnType("float");
 
                     b.Property<int>("Year")
                         .HasColumnType("int");
@@ -69,7 +69,7 @@ namespace Books.API.Migrations
                     b.ToTable("Books");
                 });
 
-            modelBuilder.Entity("Books.BL.Entities.Role", b =>
+            modelBuilder.Entity("Books.API.Entities.Role", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -83,7 +83,7 @@ namespace Books.API.Migrations
                     b.ToTable("Roles");
                 });
 
-            modelBuilder.Entity("Books.WPF.Entities.User", b =>
+            modelBuilder.Entity("Books.API.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -94,6 +94,9 @@ namespace Books.API.Migrations
 
                     b.Property<string>("Password")
                         .HasColumnType("longtext");
+
+                    b.Property<byte[]>("PasswordSalt")
+                        .HasColumnType("longblob");
 
                     b.Property<Guid?>("RoleId")
                         .HasColumnType("char(36)");
@@ -110,29 +113,29 @@ namespace Books.API.Migrations
 
             modelBuilder.Entity("BookUser", b =>
                 {
-                    b.HasOne("Books.BL.Entities.Book", null)
+                    b.HasOne("Books.API.Entities.Book", null)
                         .WithMany()
                         .HasForeignKey("LikedBooksId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Books.WPF.Entities.User", null)
+                    b.HasOne("Books.API.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UsersLikedId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Books.WPF.Entities.User", b =>
+            modelBuilder.Entity("Books.API.Entities.User", b =>
                 {
-                    b.HasOne("Books.BL.Entities.Role", "Role")
+                    b.HasOne("Books.API.Entities.Role", "Role")
                         .WithMany("Users")
                         .HasForeignKey("RoleId");
 
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("Books.BL.Entities.Role", b =>
+            modelBuilder.Entity("Books.API.Entities.Role", b =>
                 {
                     b.Navigation("Users");
                 });

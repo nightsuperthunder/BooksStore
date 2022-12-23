@@ -1,6 +1,6 @@
-﻿using Books.BL.Entities;
+﻿using Books.API.Entities;
 
-namespace Books.BL.Services;
+namespace Books.API.Services;
 
 public interface IUserService {
     Task<List<User>> GetAllUsers();
