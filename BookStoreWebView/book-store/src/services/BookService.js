@@ -2,13 +2,17 @@ export default class BookService {
     static async getAll() {
         const apiUrl = process.env.REACT_APP_SERVER_API_URL;
 
-        return await fetch(apiUrl + 'books');
+        return await fetch(apiUrl + 'books', {
+            credentials: 'include',
+            method: 'GET'
+        });
     }
 
     static async create(book) {
         const apiUrl = process.env.REACT_APP_SERVER_API_URL;
 
         const response = await fetch(apiUrl + 'books', {
+            credentials: 'include',
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -27,6 +31,7 @@ export default class BookService {
         const apiUrl = process.env.REACT_APP_SERVER_API_URL;
 
         await fetch(apiUrl + 'books/' + id, {
+            credentials: 'include',
             method: 'DELETE'
         });
     }

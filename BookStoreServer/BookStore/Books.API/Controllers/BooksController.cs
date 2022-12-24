@@ -1,5 +1,6 @@
 ﻿using Books.API.Entities;
 using Books.API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Books.API.Controllers; 
@@ -7,6 +8,7 @@ namespace Books.API.Controllers;
 
 [ApiController]
 [Route("api/books")]
+[Authorize]
 public class BooksController : ControllerBase {
     private readonly IBookService _bookService;
 
@@ -15,12 +17,14 @@ public class BooksController : ControllerBase {
     }
 
     [HttpGet] 
+    [AllowAnonymous]
     public async Task<IActionResult> GetAllBooks() {
         var books = await _bookService.GetAllBooks();
         return Ok(books);
     }
     
     [HttpGet("{id:guid}")] 
+    [AllowAnonymous]
     public async Task<IActionResult> GetBook(Guid id) {
         var books = await _bookService.GetBook(id);
         return Ok(books);

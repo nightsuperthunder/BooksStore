@@ -1,4 +1,5 @@
 ﻿using Books.API.Entities;
+using Books.API.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Books.API.Services; 
@@ -15,7 +16,13 @@ public class UserService : IUserService {
     }
 
     public async Task<User> GetUser(Guid id) {
-        return await _context.Users.FirstAsync(x => x.Id == id);
+        var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
+
+        if (user == null) {
+            throw new NotFoundException();
+        }
+
+        return user;
     }
 
     public async Task<User> CreateUser(User user) { 

@@ -11,11 +11,13 @@ namespace Books.API.Services;
 
 public class AuthService : IAuthService {
     private readonly BooksContext _context;
+    private readonly IUserService _userService;
     private readonly JwtSettings _jwtSettings;
 
-    public AuthService(BooksContext context, JwtSettings jwtSettings) {
+    public AuthService(BooksContext context, JwtSettings jwtSettings, IUserService userService) {
         _context = context;
         _jwtSettings = jwtSettings;
+        _userService = userService;
     }
 
     public async Task<AuthResponse> Login(User user) {
@@ -40,28 +42,78 @@ public class AuthService : IAuthService {
         user.PasswordSalt = GenerateSalt();
         user.Password = GenerateHash(user.Password, user.PasswordSalt);
 
-        _context.Add(user);
-        await _context.SaveChangesAsync();
-
+        await _userService.CreateUser(user);
+        
         return GenerateToken(user);
+    }
+
+    public async Task<AuthResponse> Refresh(string refreshToken) {
+        if (ValidateRefreshToken(refreshToken, out var userId)) {
+            var user = await _userService.GetUser(userId);
+
+            return GenerateToken(user);
+        }
+
+        throw new ArgumentException();
+    }
+
+    private bool ValidateRefreshToken(string refreshToken, out Guid id) {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.RefreshKey));
+        ClaimsPrincipal principal;
+        try {
+            principal = tokenHandler.ValidateToken(refreshToken, new TokenValidationParameters {
+                ValidIssuer = _jwtSettings.Issuer,
+                ValidAudience = _jwtSettings.Audience,
+                IssuerSigningKey = key,
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ClockSkew = TimeSpan.Zero
+            }, out _);
+        }
+        catch {
+            id = Guid.Empty;
+            return false;
+        }
+
+        id = Guid.Parse(principal.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        return true;
     }
 
     private AuthResponse GenerateToken(User user) {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_jwtSettings.Key);
+        var accessKey = Encoding.ASCII.GetBytes(_jwtSettings.AccessKey);
+        var refreshKey = Encoding.ASCII.GetBytes(_jwtSettings.RefreshKey);
 
-        var tokenDescriptor = new SecurityTokenDescriptor {
+
+        var accessTokenDescriptor = new SecurityTokenDescriptor {
             Subject = new ClaimsIdentity(new[] {
-                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Email, user.Email)
             }),
-
-            Expires = DateTime.UtcNow.AddMinutes(5),
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            Issuer = _jwtSettings.Issuer,
+            Audience = _jwtSettings.Audience,
+            Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.AccessTokenExpirationMinutes),
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(accessKey), SecurityAlgorithms.HmacSha256Signature)
+        };
+        
+        var refreshTokenDescriptor = new SecurityTokenDescriptor {
+            Subject = new ClaimsIdentity(new[] {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+            }),
+            Issuer = _jwtSettings.Issuer,
+            Audience = _jwtSettings.Audience,
+            Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.RefreshTokenExpirationMinutes),
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(refreshKey), SecurityAlgorithms.HmacSha256Signature)
         };
 
-        var token = tokenHandler.CreateToken(tokenDescriptor);
+        var accessToken = tokenHandler.CreateToken(accessTokenDescriptor);
+        var refreshToken = tokenHandler.CreateToken(refreshTokenDescriptor);
         var authResponse = new AuthResponse {
-            AccessToken = tokenHandler.WriteToken(token)
+            AccessToken = tokenHandler.WriteToken(accessToken),
+            RefreshToken = tokenHandler.WriteToken(refreshToken)
         };
 
         return authResponse;
