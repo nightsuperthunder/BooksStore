@@ -16,6 +16,12 @@ public class UserController : ControllerBase {
     }
 
     [HttpGet]
+    public async Task<IActionResult> GetUsers() {
+        var user = await _userService.GetAllUsers(); 
+        return Ok(user);
+    }
+    
+    [HttpGet]
     [Route("{id}")]
     public async Task<IActionResult> GetUser(Guid id) {
         try {
